@@ -6,5 +6,6 @@ export class createUserDto {
   name : string
 
   @IsEmail()
+  @IsNotEmpty()
   email: string
 }
