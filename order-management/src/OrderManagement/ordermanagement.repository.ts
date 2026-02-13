@@ -30,6 +30,28 @@ export class OrderManagementRepository {
   async createOrder(input : CreateOrderDto){
     const { userId, items } = input;
 
+    items.map(async (item) => {
+      console.log(item.productId);
+      const availabeStock = await this.prisma.product.findUnique({
+        select:{
+          stock : true
+        },
+        where : {
+          id : item.productId
+        }
+      })
+
+      await this.prisma.product.update({
+        where :{
+          id : item.productId
+        },
+        data : {
+          stock : availabeStock!.stock - item.quantity
+        }
+      })
+      console.log(availabeStock);
+    })
+
     return await this.prisma.order.create({
       data: {
         userId,
