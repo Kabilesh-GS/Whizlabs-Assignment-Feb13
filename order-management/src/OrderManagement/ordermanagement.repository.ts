@@ -6,7 +6,7 @@ import { createProductDto } from './dtos/create-product.dto';
 
 @Injectable()
 export class OrderManagementRepository {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService){}
 
   async createUsers(input : createUserDto){
     return await this.prisma.user.create({
@@ -30,38 +30,47 @@ export class OrderManagementRepository {
   async createOrder(input : CreateOrderDto){
     const { userId, items } = input;
 
-    items.map(async (item) => {
-      console.log(item.productId);
-      const availabeStock = await this.prisma.product.findUnique({
-        select:{
-          stock : true
-        },
-        where : {
-          id : item.productId
-        }
-      })
+    return await this.prisma.$transaction(async (transaction) => {
+      console.log(items);
+      for(const item of items){
+        const availableStock = await transaction.product.findUnique({
+          select: { 
+            stock: true 
+          },
+          where: { 
+            id: item.productId 
+          },
+        });
 
-      await this.prisma.product.update({
-        where :{
-          id : item.productId
-        },
-        data : {
-          stock : availabeStock!.stock - item.quantity
+        console.log(availableStock);
+        if(!availableStock){
+          throw new BadRequestException('No such product.');
         }
-      })
-      console.log(availabeStock);
-    })
+        if(availableStock.stock < item.quantity){
+          throw new BadRequestException('Insufficient stock.');
+        }
 
-    return await this.prisma.order.create({
-      data: {
-        userId,
-        orderItems: {
-          create: items.map((item) => ({
-            productId: item.productId,
-            quantity: item.quantity
-          })),
-        }
+        await transaction.product.update({
+          where: { 
+            id: item.productId 
+          },
+          data: { 
+            stock: availableStock.stock - item.quantity 
+          },
+        });
       }
-    });
+
+      return await transaction.order.create({
+        data: {
+          userId,
+          orderItems: {
+            create: items.map((item) => ({
+              productId: item.productId,
+              quantity: item.quantity
+            })),
+          }
+        }
+      });
+    })
   }
 }
