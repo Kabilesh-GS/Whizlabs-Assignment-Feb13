@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable,Logger } from "@nestjs/common";
 
 export interface IhealthService{
   healthCheck() : string
@@ -6,7 +6,9 @@ export interface IhealthService{
 
 @Injectable()
 export class HealthService{
+  private logger = new Logger(HealthService.name, {});
   healthCheck(){
+    this.logger.log("request to health check");
     return "Running !"
   }
 }
