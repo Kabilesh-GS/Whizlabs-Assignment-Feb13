@@ -72,6 +72,9 @@ export class OrderManagementRepository {
               quantity: item.quantity
             })),
           }
+        },
+        include: {
+          orderItems: true
         }
       });
     })
