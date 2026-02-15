@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../Prisma/prisma.service';
 import { CreateOrderDto } from './dtos/create-order.dto';
 import { createUserDto } from './dtos/create-user.dto';
@@ -7,6 +7,7 @@ import { createProductDto } from './dtos/create-product.dto';
 @Injectable()
 export class OrderManagementRepository {
   constructor(private prisma: PrismaService){}
+  private loggger = new Logger(OrderManagementRepository.name, {});
 
   async createUsers(input : createUserDto){
     return await this.prisma.user.create({
@@ -44,9 +45,11 @@ export class OrderManagementRepository {
 
         console.log(availableStock);
         if(!availableStock){
+          this.loggger.error("no Such product");
           throw new BadRequestException('No such product.');
         }
         if(availableStock.stock < item.quantity){
+          this.loggger.error("Insufficient stock");
           throw new BadRequestException('Insufficient stock.');
         }
 
