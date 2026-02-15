@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import helmet from 'helmet';
-import { ConsoleLogger } from '@nestjs/common';
+import { ConsoleLogger, ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -13,6 +13,7 @@ async function bootstrap() {
   });
   app.use(helmet());
   app.enableCors();
+  app.useGlobalPipes(new ValidationPipe());
 
   await app.listen(process.env.PORT ?? 1000);
 }
