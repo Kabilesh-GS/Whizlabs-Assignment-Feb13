@@ -20,4 +20,12 @@ export class OrderManagementService {
   async createOrder(input : CreateOrderDto){
     return await this.orderManagementRepo.createOrder(input);
   }
+
+  async deleteUser(id : number){
+    return await this.orderManagementRepo.deleteUser(id);
+  }
+
+  async getUsers(){
+    return await this.orderManagementRepo.getusers();
+  }
 }

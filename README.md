@@ -5,10 +5,9 @@ A comprehensive order management system designed to streamline order processing,
 
 ## Features
 - Order creation and validation
-- Order status tracking
 - Inventory management
-- Customer order history
-- Payment processing integration
+- Softdelete users
+- Getting all active users
 
 ## Installation
 ```bash

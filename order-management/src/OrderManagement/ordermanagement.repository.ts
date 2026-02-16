@@ -28,6 +28,25 @@ export class OrderManagementRepository {
     })
   }
 
+  async deleteUser(id : number){
+    return await this.prisma.user.update({
+      where : {
+        id : id
+      },
+      data : {
+        active : false
+      }
+    })
+  }
+
+  async getusers(){
+    return await this.prisma.user.findMany({
+      where : {
+        active : true
+      }
+    })
+  }
+
   async createOrder(input : CreateOrderDto){
     const { userId, items } = input;
 

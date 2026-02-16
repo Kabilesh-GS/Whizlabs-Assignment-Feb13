@@ -1,4 +1,4 @@
-import {Controller, Post, Get, Body, Param, ParseIntPipe, Logger } from '@nestjs/common';
+import {Controller, Post, Get, Body, Param, ParseIntPipe, Logger, Put, Patch } from '@nestjs/common';
 import { OrderManagementService } from './ordermanagement.service';
 import { CreateOrderDto } from './dtos/create-order.dto';
 import { createUserDto } from './dtos/create-user.dto';
@@ -26,4 +26,16 @@ export class OrderManagementController {
       this.logger.log("Hit on addorder API")
       return await this.orderManagementService.createOrder(input)
     }
+
+  @Patch(':id')
+  async deleteUser(@Param('id') id : number){
+    this.logger.log("Hit on deleteUser")
+    return await this.orderManagementService.deleteUser(Number(id));
+  }
+
+  @Get('getallusers')
+  async getUsers(){
+    this.logger.log("Hit on getUsers");
+    return await this.orderManagementService.getUsers();
+  }
 }
